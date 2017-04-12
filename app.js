@@ -8,6 +8,7 @@ var bodyParser = require('body-parser');
 var index = require('./routes/index');
 var login = require('./routes/login');
 var users = require('./routes/users');
+var feedbacks = require('./routes/feedbacks');
 
 var app = express();
 //allow custom header and CORS
@@ -40,6 +41,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/', index);
 app.use('/login', login);
 app.use('/users', users);
+app.use('/feedbacks', feedbacks);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
