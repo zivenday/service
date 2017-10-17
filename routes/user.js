@@ -26,7 +26,7 @@ router.post('/signUp',function(req,res,next){
     password: req.body.password
   });
   // 保存用户账号
-  newUser.save((err) => {
+  newUser.save(err => {
     if (err) {
       res.json({'code':1, message: '注册失败!'});
     }else{

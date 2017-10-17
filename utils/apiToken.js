@@ -17,35 +17,25 @@ exports.check_auth = function (req, res, next) {
         next()
     } else {
         if (!!req.cookies.user) { //检测user token 是否存在
-            console.log('user', req.cookies.user)
-            let _token=JSON.parse(req.cookies.user).token;
-            User.findOne({
-                name: JSON.parse(req.cookies.user).name
-            }).exec().then(user => {
-                if ((!!user)&&(_token===user.token)) {
-                    console.log('user',user)
+            let _user=JSON.parse(req.cookies.user)
+            User.findByName(_user.name,(err,user)=>{
+               if(!!user){
+                   if(_user.token===user.token){
                     jwt.verify(JSON.parse(req.cookies.user).token, config.secret,function (err, decoded) {
-                        if (err) {
-                            err = {
-                                code: 1,
-                                message: 'TokenExpiredError'
-                            }
-                            res.json(err)
-                        } else { //token检测正常则通过
-                            console.log('decode',decoded)
-                            next()
-                        }
-                    });
-                } else {
-                   let err = {
-                        code: 1,
-                        message: 'user is no-exist'
-                    }
-                    res.json(err)
-                }
+                        !!err?err.code=1:next()
+                        !!err?res.json(err):''
+                    }); 
+                   }else{//token不相同
+                    res.json({code:1,message:'ErrorToken'})
+                   }
+               }else{//数据库中没有该user
+                   res.json({code:1,message:'user is no-exist'})
+               }
+            }).catch(err=>{
+                err.code=1;
+                res.json(err)
             })
-
-        } else {
+        } else {//没有携带cookie user
             res.json({
                 code: 1,
                 message: 'NoTokenError'

@@ -51,6 +51,11 @@ UserSchema.methods.comparePassword = function(passw, cb) {
         cb(null, isMatch);
     });
 };
+UserSchema.statics={
+    findByName:function(name,cb){
+        return this.findOne({name:name}).exec(cb)
+    }
+}
 // // 校验用户token是否正常
 // UserSchema.methods.compareToken = function(authToken, passport) {
 
