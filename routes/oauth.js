@@ -31,35 +31,29 @@ router.get('/callback', function (req, res, next) {
           function (error, respo) {
             // console.log(respo)
             let _name = respo.body.login || respo.body.name
-            User.findOne({
-              name: _name
-            }, function (err, user) {
+            User.findByName(_name, (err, user) => {
               if (err) {
-                res.send({
+                err.code=1;
+                res.json({
                   err: err
                 })
               } else {
-                if(user){
-                  user.name=_name
-                }else{
-                  
-                  user=new User({name:_name})
-                }
-                let _token = jwt.sign({
+                 user?user.name=_name:user = new User({
                   name: _name
+                })
+                user.role=2;
+                let _token = jwt.sign({
+                  name: _name,
                 }, config.secret, {
                   expiresIn: 60 * 60 * 1000
                 });
-                
                 user.token = _token
-                console.log('token',user)
-                user.save(function (err) {
-                  
+                user.save(err=>{
                   if (err) {
-                    res.send(err)
+                    err.code=1;
+                    res.json(err)
                   } else {
-                    console.log(111)
-                    res.cookie('user', JSON.stringify(user), {
+                    res.cookie('user', JSON.stringify({name:user.name,role:user.role,token:user.token}), {
                       maxAge: 3600000
                     })
                     res.redirect('http://localhost:8080/')

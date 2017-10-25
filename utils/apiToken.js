@@ -20,7 +20,7 @@ exports.check_auth = function (req, res, next) {
             let _user=JSON.parse(req.cookies.user)
             User.findByName(_user.name,(err,user)=>{
                if(!!user){
-                   if(_user.token===user.token){
+                   if(_user.token==user.token){
                     jwt.verify(JSON.parse(req.cookies.user).token, config.secret,function (err, decoded) {
                         !!err?err.code=1:next()
                         !!err?res.json(err):''

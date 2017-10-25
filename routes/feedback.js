@@ -24,9 +24,9 @@ import Feedback from '../models/feedback'
 
 
 //全部查询，条件查询，分页查询
-router.post('/query/',function(req,res,next){
+router.post('',function(req,res,next){
     let total=0;
-    Feedback.find({}).count().exec().then(count=>{
+    Feedback.find({},'-_id,name,date,info').count().exec().then(count=>{
        total=count;
         Feedback.find({}).limit(req.body.pageSize).skip((req.body.page-1)*req.body.pageSize).exec().then(feedbackList=>{
             res.json({code:0,message:'success',total:total,feedbackList:feedbackList})
@@ -38,7 +38,7 @@ router.post('/query/',function(req,res,next){
     });
    
 })
-router.post('/query/:id',function(req,res,next){
+router.post('/:id',function(req,res,next){
     let count=Feedback.find({}).count();
     let query=query||{}
     console.log('ssss')
